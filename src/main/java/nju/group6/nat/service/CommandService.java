@@ -17,7 +17,7 @@ public class CommandService {
         if (telnetClient == null) {
             telnetClient = new TelnetClient();
         }
-        telnetClient.connect("172.19.240.101", 23);
+        telnetClient.connect("172.19.241.173", 23);
         Thread writer;
         writer = new Thread()
         {
@@ -53,7 +53,6 @@ public class CommandService {
 
     public void sendPassword(String password) throws IOException {
         sendCommand(password);
-        startDynamips();
     }
 
     public String sendCommand(String command) throws IOException {
@@ -78,13 +77,6 @@ public class CommandService {
         OutputStream outputStream = telnetClient.getOutputStream();
         outputStream.write("echo \"test command\" > /root/b".getBytes());
         outputStream.flush();
-    }
-
-    public void startDynamips() throws IOException {
-        sendCommand('su');
-        sendCommand('password');
-            String command = "dynamips -P 7200 -p 0:C7200-IO-FE -p 1:PA-4T+ /home/nat/app/dynamips/unzip-c7200-advsecurityk9-mz.124-11.T.bin";
-        sendCommand(command);
     }
 
     public static void main(String[] args) {

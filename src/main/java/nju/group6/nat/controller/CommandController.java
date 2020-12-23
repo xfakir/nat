@@ -38,8 +38,8 @@ public class CommandController {
         commandService.sendPassword(password);
     }
 
-    @RequestMapping("/sendCommand")
-    public void sendCommand(@RequestParam String command) throws IOException {
-        commandService.sendCommand(command);
+    @RequestMapping("/testCommand")
+    public void testCommand() throws IOException {
+        commandService.testCommand();
     }
 }
