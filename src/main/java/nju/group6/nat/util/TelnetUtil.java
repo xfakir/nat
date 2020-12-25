@@ -10,6 +10,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+
 /**
  * @author jerry
  * @create 2020-12-23-9:10
@@ -17,73 +21,9 @@ import java.io.PrintStream;
 @Component
 public class TelnetUtil {
     private static TelnetClient telnetClient = null;
+
     private static InputStream inputStream = null;
     private static OutputStream outputStream = null;
-
-    public static void connect() throws IOException {
-        if (telnetClient == null) {
-            telnetClient = new TelnetClient();
-
-        }
-
-        try {
-            telnetClient.connect("192.168.206.142", 23);
-//            telnetClient.connect("172.19.240.101", 23);
-        } catch (IOException e) {
-            System.out.println("connect failed");
-            e.printStackTrace();
-        }
-//        Thread writer;
-//        writer = new Thread()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                try
-//                {
-//                    Util.copyStream(telnetClient.getInputStream(), System.out);
-//                }
-//                catch (final IOException e)
-//                {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-//
-//
-//        writer.setPriority(Thread.currentThread().getPriority() + 1);
-//
-//        writer.start();
-        inputStream = telnetClient.getInputStream();
-        outputStream = telnetClient.getOutputStream();
-//        outputStream = new PrintStream(telnetClient.getOutputStream());
-
-        TelnetUtil.read("login:");
-
-    }
-    public static void connect(String ip, String port) throws IOException {
-        if (telnetClient == null) {
-            telnetClient = new TelnetClient();
-        }
-
-        telnetClient.connect(ip, Integer.parseInt(port));
-
-
-        TelnetUtil.read("login:");
-    }
-
-    public static void disconnect() throws IOException {
-        telnetClient.disconnect();
-    }
-
-
-    public static void sendUsername(String username) throws IOException {
-        sendCommand(username);
-    }
-
-    public static void sendPassword(String password) throws IOException {
-        sendCommand(password);
-    }
 
     public static void sendCommand(String command) throws IOException {
 
@@ -96,26 +36,71 @@ public class TelnetUtil {
         }
 
     }
-
-    public static void testCommand() throws IOException {
-        if (telnetClient == null) {
-            System.out.println("connection is closed");
+        public static void read(String pattern) throws IOException {
+            int len = -1;
+            byte[] buffer = new byte[1024];
+            StringBuilder sb = new StringBuilder();
+            while((len = inputStream.read(buffer)) != -1){
+                sb.append(new String(buffer, 0, len));
+                if(sb.toString().trim().endsWith(pattern)){
+                    break;
+                }
+            }
+            System.out.println(sb.toString());
         }
-        OutputStream outputStream = telnetClient.getOutputStream();
-        outputStream.write("echo \"test command\" > /root/b".getBytes());
-        outputStream.flush();
-    }
 
-    public static void read(String pattern) throws IOException {
-        int len = -1;
-        byte[] buffer = new byte[1024];
-        StringBuilder sb = new StringBuilder();
-        while((len = inputStream.read(buffer)) != -1){
-            sb.append(new String(buffer, 0, len));
-            if(sb.toString().trim().endsWith(pattern)){
+   /* public static String receive() throws IOException {
+        InputStream inputStream = telnetClient.getInputStream();
+        StringBuilder result = new StringBuilder();
+        char[] buffer = new char[1024];
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        for (;;) {
+            System.out.println("before read");
+            int len = reader.read(buffer,0,buffer.length);
+            System.out.println("after read");
+            if (len < 0) {
                 break;
             }
+            result.append(buffer,0,len);
+            System.out.println(result.toString());
+            System.out.println("==========================");
         }
-        System.out.println(sb.toString());
+        return result.toString();
     }
+
+<<<<<<< HEAD
+
+=======
+    public static String test() throws IOException {
+        InputStream inputStream = telnetClient.getInputStream();
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+            System.out.println(result.toString());
+        }
+        return result.toString("UTF-8");
+    }*/
+
+//
+//    public static String receive() throws IOException, InterruptedException {
+//        InputStream inputStream = telnetClient.getInputStream();
+//        int count = inputStream.available();
+//        while (count == 0) {
+//            Thread.sleep(1000);
+//            count = inputStream.available();
+//        }
+//        //ByteArrayOutputStream result = new ByteArrayOutputStream();
+//
+//        byte[] buffer = new byte[count];
+//        if (count != 0) {
+//            int readCount = 0;
+//            while(readCount < count) {
+//                readCount += inputStream.read(buffer, readCount, count - readCount);
+//            }
+//        }
+//        return new String(buffer);
+//    }
+
 }

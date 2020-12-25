@@ -20,37 +20,35 @@ public class CommandController {
     private CommandService commandService;
 
 
-//    private CommandService commandService;
-
-
     @RequestMapping("/test")
     public String test() {
         return "NAT";
     }
 
     @RequestMapping("/connect")
-    public Result connect() throws IOException {
-
-        TelnetUtil.connect();
-
+    public Result connect() throws IOException, InterruptedException {
+        commandService.connect();
         return Result.success("connect succeed",null);
     }
 
     @RequestMapping("/username")
-    public void sendUsername(@RequestParam String username) throws IOException {
+    public void sendUsername(@RequestParam String username) throws Exception {
         System.out.println(username);
-//        commandService.sendUsername(username);
-        TelnetUtil.sendUsername(username);
+        commandService.sendUsername(username);
         TelnetUtil.read("Password:");
     }
 
     @RequestMapping("/password")
-    public void sendPassword(@RequestParam String password) throws IOException { ;
+    public void sendPassword(@RequestParam String password) throws Exception {
+        ;
         System.out.println(password);
-//        commandService.sendPassword(password);
-        TelnetUtil.sendPassword(password);
+        commandService.sendPassword(password);
+//        TelnetUtil.sendPassword(password);
         TelnetUtil.read("$");
+
     }
+
+
 
     @RequestMapping("/testCommand")
     public void testCommand() throws IOException {
