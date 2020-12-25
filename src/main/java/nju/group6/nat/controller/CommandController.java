@@ -28,22 +28,19 @@ public class CommandController {
 
     @RequestMapping("/connect")
     public Result connect() throws IOException, InterruptedException {
-        commandService.connect();
+        TelnetUtil.connect();
         TelnetUtil.read("login:");
         return Result.success("connect succeed",null);
     }
 
     @RequestMapping("/username")
     public void sendUsername(@RequestParam String username) throws Exception {
-        System.out.println(username);
         commandService.sendUsername(username);
         TelnetUtil.read("Password:");
     }
 
     @RequestMapping("/password")
     public void sendPassword(@RequestParam String password) throws Exception {
-        ;
-        System.out.println(password);
         commandService.sendPassword(password);
 //        TelnetUtil.sendPassword(password);
         TelnetUtil.read("$");

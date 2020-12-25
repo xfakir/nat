@@ -25,6 +25,36 @@ public class TelnetUtil {
     private static InputStream inputStream = null;
     private static OutputStream outputStream = null;
 
+    public  static void  connect(String ip, String port) throws IOException {
+        if (telnetClient == null) {
+            telnetClient = new TelnetClient();
+        }
+        telnetClient.connect(ip, Integer.parseInt(port));
+        inputStream = telnetClient.getInputStream();
+        outputStream = telnetClient.getOutputStream();
+
+    }
+
+    public  static void connect() throws IOException {
+        if (telnetClient == null) {
+            telnetClient = new TelnetClient();
+        }
+
+        try {
+            telnetClient.connect("192.168.206.142", 23);
+//            telnetClient.connect("172.19.240.101", 23);
+        } catch (IOException e) {
+            System.out.println("connect failed");
+            e.printStackTrace();
+        }
+        inputStream = telnetClient.getInputStream();
+        outputStream = telnetClient.getOutputStream();
+    }
+
+    public static void disconnect() throws IOException {
+        telnetClient.disconnect();
+    }
+
     public static void sendCommand(String command) throws IOException {
 
         //加入换行符
