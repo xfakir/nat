@@ -26,7 +26,7 @@ public class CommandController {
     }
 
     @RequestMapping("/connect")
-    public Result connect() throws IOException {
+    public Result connect() throws IOException, InterruptedException {
 
         commandService.connect();
 
@@ -34,14 +34,14 @@ public class CommandController {
     }
 
     @RequestMapping("/username")
-    public void sendUsername(@RequestParam String username) throws IOException {
+    public void sendUsername(@RequestParam String username) throws IOException, InterruptedException {
 
         commandService.sendUsername(username);
 
     }
 
     @RequestMapping("/password")
-    public void sendPassword(@RequestParam String password) throws IOException { ;
+    public void sendPassword(@RequestParam String password) throws IOException, InterruptedException { ;
 
         commandService.sendPassword(password);
 

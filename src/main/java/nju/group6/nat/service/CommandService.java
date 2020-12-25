@@ -111,17 +111,29 @@ public class CommandService {
     }
 
 
-    public void sendUsername(String username) throws IOException {
+    public void sendUsername(String username) throws IOException, InterruptedException {
         TelnetUtil.sendCommand(username);
-    }
-
-    public void sendPassword(String password) throws IOException {
-        TelnetUtil.sendCommand(password);
-    }
-
-    public void connect() throws IOException {
-        TelnetUtil.connect();
+        System.out.println(System.currentTimeMillis());
         String result = TelnetUtil.receive();
+        System.out.println(System.currentTimeMillis());
+        System.out.println("===========receive==========");
+        System.out.println(result);
+    }
+
+    public void sendPassword(String password) throws IOException, InterruptedException {
+        TelnetUtil.sendCommand(password);
+        System.out.println(System.currentTimeMillis());
+        String result = TelnetUtil.receive();
+        System.out.println(System.currentTimeMillis());
+        System.out.println("===========receive==========");
+        System.out.println(result);
+    }
+
+    public void connect() throws IOException, InterruptedException {
+        TelnetUtil.connect();
+        System.out.println(System.currentTimeMillis());
+        String result = TelnetUtil.receive();
+        System.out.println(System.currentTimeMillis());
         System.out.println("===========receive==========");
         System.out.println(result);
     }
