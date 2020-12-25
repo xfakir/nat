@@ -111,5 +111,18 @@ public class CommandService {
     }
 
 
+    public void sendUsername(String username) throws IOException {
+        TelnetUtil.sendCommand(username);
+    }
 
+    public void sendPassword(String password) throws IOException {
+        TelnetUtil.sendCommand(password);
+    }
+
+    public void connect() throws IOException {
+        TelnetUtil.connect();
+        String result = TelnetUtil.receive();
+        System.out.println("===========receive==========");
+        System.out.println(result);
+    }
 }

@@ -4,8 +4,8 @@ import org.apache.commons.net.io.Util;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author jerry
@@ -15,40 +15,9 @@ import java.io.OutputStream;
 public class TelnetUtil {
     private static TelnetClient telnetClient = null;
 
-    public static void connect()  {
-        if (telnetClient == null) {
-            telnetClient = new TelnetClient();
-        }
-
-        try {
-//            telnetClient.connect("192.168.206.139", 23);
-            telnetClient.connect("172.19.240.101", 23);
-        } catch (IOException e) {
-            System.out.println("connect failed");
-            e.printStackTrace();
-        }
-        Thread writer;
-        writer = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Util.copyStream(telnetClient.getInputStream(), System.out);
-                }
-                catch (final IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-
-        writer.setPriority(Thread.currentThread().getPriority() + 1);
-
-        writer.start();
-
+    public static void connect() throws IOException {
+        //connect("172.19.240.101", "23");
+        connect("172.19.241.173", "23");
     }
     public static void connect(String ip, String port) throws IOException {
         if (telnetClient == null) {
@@ -56,27 +25,6 @@ public class TelnetUtil {
         }
 
         telnetClient.connect(ip, Integer.parseInt(port));
-        Thread writer;
-        writer = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Util.copyStream(telnetClient.getInputStream(), System.out);
-                }
-                catch (final IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-
-        writer.setPriority(Thread.currentThread().getPriority() + 1);
-
-        writer.start();
 
     }
 
@@ -84,14 +32,6 @@ public class TelnetUtil {
         telnetClient.disconnect();
     }
 
-
-    public static void sendUsername(String username) throws IOException {
-        sendCommand(username);
-    }
-
-    public static void sendPassword(String password) throws IOException {
-        sendCommand(password);
-    }
 
     public static void sendCommand(String command) throws IOException {
 
@@ -106,12 +46,20 @@ public class TelnetUtil {
 
     }
 
-    public static void testCommand() throws IOException {
-        if (telnetClient == null) {
-            System.out.println("connection is closed");
+    public static String receive() throws IOException {
+        InputStream inputStream = telnetClient.getInputStream();
+        StringBuilder result = new StringBuilder();
+        char[] buffer = new char[1024];
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        for (;;) {
+            int len = reader.read(buffer,0,buffer.length);
+            if (len < 0) {
+                break;
+            }
+            result.append(buffer,0,len);
         }
-        OutputStream outputStream = telnetClient.getOutputStream();
-        outputStream.write("echo \"test command\" > /root/b".getBytes());
-        outputStream.flush();
+        return result.toString();
     }
+
+
 }
