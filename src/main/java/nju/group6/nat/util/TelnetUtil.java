@@ -1,11 +1,14 @@
 package nju.group6.nat.util;
 
 import org.apache.commons.net.io.Util;
+import java.lang.*;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * @author jerry
@@ -14,40 +17,48 @@ import java.io.OutputStream;
 @Component
 public class TelnetUtil {
     private static TelnetClient telnetClient = null;
+    private static InputStream inputStream = null;
+    private static OutputStream outputStream = null;
 
-    public static void connect()  {
+    public static void connect() throws IOException {
         if (telnetClient == null) {
             telnetClient = new TelnetClient();
+
         }
 
         try {
-//            telnetClient.connect("192.168.206.139", 23);
-            telnetClient.connect("172.19.240.101", 23);
+            telnetClient.connect("192.168.206.142", 23);
+//            telnetClient.connect("172.19.240.101", 23);
         } catch (IOException e) {
             System.out.println("connect failed");
             e.printStackTrace();
         }
-        Thread writer;
-        writer = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Util.copyStream(telnetClient.getInputStream(), System.out);
-                }
-                catch (final IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
+//        Thread writer;
+//        writer = new Thread()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                try
+//                {
+//                    Util.copyStream(telnetClient.getInputStream(), System.out);
+//                }
+//                catch (final IOException e)
+//                {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//
+//
+//        writer.setPriority(Thread.currentThread().getPriority() + 1);
+//
+//        writer.start();
+        inputStream = telnetClient.getInputStream();
+        outputStream = telnetClient.getOutputStream();
+//        outputStream = new PrintStream(telnetClient.getOutputStream());
 
-
-        writer.setPriority(Thread.currentThread().getPriority() + 1);
-
-        writer.start();
+        TelnetUtil.read("login:");
 
     }
     public static void connect(String ip, String port) throws IOException {
@@ -56,28 +67,9 @@ public class TelnetUtil {
         }
 
         telnetClient.connect(ip, Integer.parseInt(port));
-        Thread writer;
-        writer = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    Util.copyStream(telnetClient.getInputStream(), System.out);
-                }
-                catch (final IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        };
 
 
-        writer.setPriority(Thread.currentThread().getPriority() + 1);
-
-        writer.start();
-
+        TelnetUtil.read("login:");
     }
 
     public static void disconnect() throws IOException {
@@ -96,10 +88,9 @@ public class TelnetUtil {
     public static void sendCommand(String command) throws IOException {
 
         //加入换行符
-        command = command + "\n";
+        command = command +"\n";
 
         if(telnetClient != null){
-            OutputStream outputStream = telnetClient.getOutputStream();
             outputStream.write(command.getBytes());
             outputStream.flush();
         }
@@ -113,5 +104,18 @@ public class TelnetUtil {
         OutputStream outputStream = telnetClient.getOutputStream();
         outputStream.write("echo \"test command\" > /root/b".getBytes());
         outputStream.flush();
+    }
+
+    public static void read(String pattern) throws IOException {
+        int len = -1;
+        byte[] buffer = new byte[1024];
+        StringBuilder sb = new StringBuilder();
+        while((len = inputStream.read(buffer)) != -1){
+            sb.append(new String(buffer, 0, len));
+            if(sb.toString().trim().endsWith(pattern)){
+                break;
+            }
+        }
+        System.out.println(sb.toString());
     }
 }

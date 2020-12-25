@@ -38,18 +38,18 @@ public class CommandController {
 
     @RequestMapping("/username")
     public void sendUsername(@RequestParam String username) throws IOException {
-
+        System.out.println(username);
 //        commandService.sendUsername(username);
         TelnetUtil.sendUsername(username);
-
+        TelnetUtil.read("Password:");
     }
 
     @RequestMapping("/password")
     public void sendPassword(@RequestParam String password) throws IOException { ;
-
+        System.out.println(password);
 //        commandService.sendPassword(password);
         TelnetUtil.sendPassword(password);
-
+        TelnetUtil.read("$");
     }
 
     @RequestMapping("/testCommand")
