@@ -5,6 +5,7 @@ import nju.group6.nat.util.Result;
 
 import nju.group6.nat.util.TelnetUtil;
 
+import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ public class CommandController {
     @RequestMapping("/connect")
     public Result connect() throws IOException, InterruptedException {
         commandService.connect();
+        TelnetUtil.read("login:");
         return Result.success("connect succeed",null);
     }
 
