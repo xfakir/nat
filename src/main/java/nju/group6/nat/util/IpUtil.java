@@ -3,6 +3,8 @@ package nju.group6.nat.util;
 
 
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +90,28 @@ public class IpUtil {
         return ipstr.toString();
     }
 
-
-
+    public static String getPCInfo(String query, int start, int len){
+        String info = "";
+        try {
+            Process pro = Runtime.getRuntime().exec("cmd /c ipconfig /all | find /I \""+query+"\"");
+            InputStreamReader isr = new InputStreamReader(pro.getInputStream(), "GBK");//需要转换字符编码
+            BufferedReader br = new BufferedReader(isr);
+            String str = br.readLine();
+            while (str != null) {
+                System.out.println(str.trim());
+                System.out.println(str.trim().length());
+                info = str.trim().substring(start,str.trim().length()-len);
+                System.out.println(info);
+                str = br.readLine();
+            }
+            br.close();
+            isr.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return info;
+    }
 
 
 

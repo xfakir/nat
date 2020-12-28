@@ -1,41 +1,40 @@
 package nju.group6.nat.service;
 
 
-import nju.group6.nat.util.IOUtil;
-import org.apache.commons.net.io.Util;
-import org.apache.commons.net.telnet.TelnetClient;
-
-
+import nju.group6.nat.pojo.RouterInterface;
 import nju.group6.nat.util.IpUtil;
 import nju.group6.nat.util.TelnetUtil;
-import org.apache.commons.net.io.Util;
-import org.apache.commons.net.telnet.TelnetClient;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CommandService {
 
 //    private TelnetClient telnetClient = null;
 
-
-    //enter conf termnal mode
-    public void enter(){
-        String command1 = "enable";
-        String command2 = "configure terminal";
+    public void enable(){
+        String command = "enable";
         try {
-            TelnetUtil.sendCommand(command1);
-            TelnetUtil.sendCommand(command2);
+            TelnetUtil.sendCommand(command);
+            TelnetUtil.read("Password:");
         } catch (IOException e) {
-            System.out.println("enter failed");
             e.printStackTrace();
         }
     }
+
+    public void configTerminal(){
+        String command = "config terminal";
+        try {
+            TelnetUtil.sendCommand(command);
+            TelnetUtil.read("#");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void exit(){
         String command = "exit";
@@ -51,24 +50,24 @@ public class CommandService {
         String command = "interface "+interfaceName;
         try {
             TelnetUtil.sendCommand(command);
+            TelnetUtil.read("#");
         } catch (IOException e) {
             System.out.println("enter interface failed");
             e.printStackTrace();
         }
     }
     //configure interface ip
-    public void confInterfaceIP(String interfaceName,String ip, String netmask){
-        enterInterface(interfaceName);
+    public void confInterfaceIP(String interfaceName,String ip, String netmask, String status){
         try {
             String command1 = "ip address "+ip+" "+netmask;
-            String command2 = "no shutdown";
+            String command2 = status.equals("0") ? "shutdown":"no shutdown";
             TelnetUtil.sendCommand(command1);
             TelnetUtil.sendCommand(command2);
+            TelnetUtil.read("#");
         } catch (IOException e) {
             System.out.println("interface ip conf failed");
             e.printStackTrace();
         }
-        exit();
     }
 
     //configure nat router interface inside or outside
@@ -132,5 +131,30 @@ public class CommandService {
 //        System.out.println(result);
     }
 
+    public Map<String,RouterInterface> getRouterInterface() throws IOException {
+        Map<String, RouterInterface> interfaces = new HashMap<>();
+        String command = "show ip int b";
+        TelnetUtil.sendCommand(command);
+        String info = TelnetUtil.read("#");
+        String[] items = info.split("\n");
+        System.out.println(items.length);
+        for(int i = 0; i < items.length -1; i++){
+            if(items[i].trim().length() < 20){
+                continue;
+            }
+            String[] cols = items[i].trim().split("\\s+");
+            RouterInterface routerInterface = new RouterInterface(cols[0],cols[1],cols[2],cols[3],cols[4],cols[5]);
+            interfaces.put(cols[0],routerInterface);
+        }
+        return interfaces;
+    }
+
+    public Map<String,String> getPCInfo(String pcName){
+        Map<String, String> pcInfo = new HashMap<>();
+        pcInfo.put("ip", IpUtil.getPCInfo("ipv4",34,4));
+        pcInfo.put("netmask", IpUtil.getPCInfo("子网掩码",32,0));
+        pcInfo.put("gateway", IpUtil.getPCInfo("默认网关",32,0));
+        return pcInfo;
+    }
 
 }

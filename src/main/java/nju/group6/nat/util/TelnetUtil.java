@@ -1,17 +1,11 @@
 package nju.group6.nat.util;
 
-import org.apache.commons.net.io.Util;
-import java.lang.*;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -66,7 +60,7 @@ public class TelnetUtil {
         }
 
     }
-        public static void read(String pattern) throws IOException {
+        public static String read(String pattern) throws IOException {
             int len = -1;
             byte[] buffer = new byte[1024];
             StringBuilder sb = new StringBuilder();
@@ -77,7 +71,10 @@ public class TelnetUtil {
                 }
             }
             System.out.println(sb.toString());
+            return sb.toString();
         }
+
+
 
    /* public static String receive() throws IOException {
         InputStream inputStream = telnetClient.getInputStream();
