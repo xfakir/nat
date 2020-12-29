@@ -11,28 +11,25 @@ import org.springframework.stereotype.Component;
 public class RouterInterface {
 
 
-    private final String name;
+    private String name;
 
     private String address;
 
-    //ok yes or no meaningless
-    private String isOK;
-
-    private String method;
+    private String netmask;
 
     //on or off
-    private String status;
-
-    private String protocol;
+    private String state;
 
 
-    public  RouterInterface(String name, String address, String isOK, String method, String status, String protocol) {
+    public RouterInterface() {
+
+    }
+
+    public  RouterInterface(String name, String address,String netmask, String state) {
         this.name = name;
         this.address = address;
-        this.isOK = isOK;
-        this.method = method;
-        this.status = status;
-        this.protocol = protocol;
+        this.state = state;
+        this.netmask = netmask;
     }
 
     public String getName() {
@@ -48,36 +45,20 @@ public class RouterInterface {
         this.address = address;
     }
 
-    public String getIsOK() {
-        return isOK;
+    public String getState() {
+        return state;
     }
 
-    public void setIsOK(String isOK) {
-        this.isOK = isOK;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getMethod() {
-        return method;
+    public String getNetmask() {
+        return netmask;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setNetmask(String netmask) {
+        this.netmask = netmask;
     }
 
     @Override
@@ -85,10 +66,7 @@ public class RouterInterface {
         return "RouterInterface{" +
                 "name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", isOK='" + isOK + '\'' +
-                ", method='" + method + '\'' +
-                ", status='" + status + '\'' +
-                ", protocol='" + protocol + '\'' +
+                ", status='" + state + '\'' +
                 '}';
     }
 }

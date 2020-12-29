@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -131,8 +133,12 @@ public class CommandService {
 //        System.out.println(result);
     }
 
-    public Map<String,RouterInterface> getRouterInterface() throws IOException {
-        Map<String, RouterInterface> interfaces = new HashMap<>();
+    public void disconnect() throws IOException {
+        TelnetUtil.disconnect();
+    }
+
+    public List<RouterInterface> getRouterInterface() throws IOException {
+        List<RouterInterface> list = new LinkedList<>();
         String command = "show ip int b";
         TelnetUtil.sendCommand(command);
         String info = TelnetUtil.read("#");
@@ -143,10 +149,16 @@ public class CommandService {
                 continue;
             }
             String[] cols = items[i].trim().split("\\s+");
-            RouterInterface routerInterface = new RouterInterface(cols[0],cols[1],cols[2],cols[3],cols[4],cols[5]);
-            interfaces.put(cols[0],routerInterface);
+            RouterInterface routerInterface;
+            //TODO netmask
+            if (cols[4] .contains("up") ) {
+                routerInterface = new RouterInterface(cols[0],cols[1],"","1");
+            } else {
+                routerInterface = new RouterInterface(cols[0],cols[1],"","0");
+            }
+            list.add(routerInterface);
         }
-        return interfaces;
+        return list;
     }
 
     public Map<String,String> getPCInfo(String pcName){

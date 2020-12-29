@@ -1,16 +1,16 @@
 package nju.group6.nat.controller;
 
+import nju.group6.nat.pojo.NatConfig;
 import nju.group6.nat.pojo.RouterInterface;
 import nju.group6.nat.service.CommandService;
 import nju.group6.nat.util.Result;
 import nju.group6.nat.util.TelnetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,7 +35,7 @@ public class CommandController {
     }
 
     @RequestMapping("/password")
-    public Result sendPassword(@RequestParam String password) throws IOException {
+    public Result sendPassword(@RequestParam String password) throws IOException, InterruptedException {
         TelnetUtil.sendCommand(password);
         String ret1 = TelnetUtil.read("Password:").trim();
         if(!ret1.endsWith(">") && login_passwd_error_count > 0){
@@ -49,50 +49,50 @@ public class CommandController {
         commandService.enable();
         String ret2 = TelnetUtil.read("Password");
         TelnetUtil.sendCommand("CISCO");
-        Map<String, RouterInterface> data = commandService.getRouterInterface();
+        List<RouterInterface> routerInterface = commandService.getRouterInterface();
         commandService.configTerminal();
-        return Result.success("success", data);
+       /* System.out.println(password);
+        Thread.sleep(1000);
+        List<RouterInterface> routerInterface = new LinkedList<>();
+        RouterInterface r1 = new RouterInterface("f0/0","10.0.0.1","10.0.0.0","1");
+        RouterInterface r2 = new RouterInterface("f0/1","10.0.0.1","10.0.0.0","0");
+        RouterInterface r3 = new RouterInterface("s0/0/0/0","10.0.0.1","10.0.0.0","1");
+        RouterInterface r4 = new RouterInterface("s0/0/0/1","10.0.0.1","10.0.0.0","0");
+        routerInterface.add(r1);
+        routerInterface.add(r2);
+        routerInterface.add(r3);
+        routerInterface.add(r4);*/
+        return Result.success("success", routerInterface);
     }
 
 
-  @GetMapping("/configInterface")
-    public Result configureInterface(@RequestParam String interfaceName, @RequestParam String ip, @RequestParam String netmask, @RequestParam String status){
-        commandService.enterInterface(interfaceName);
-        commandService.confInterfaceIP(interfaceName, ip, netmask, status);
+    @RequestMapping("/configInterface")
+    public Result configureInterface(@RequestBody RouterInterface routerInterface){
+        commandService.enterInterface(routerInterface.getName());
+        commandService.confInterfaceIP(routerInterface.getName(), routerInterface.getAddress(),
+                routerInterface.getNetmask(), routerInterface.getState());
         commandService.exit();
-        return Result.success("config interface succeed", null);
+        return Result.success("config ineterface succeed", null);
     }
 
     @RequestMapping("/configNat")
-    public Result configureNat(@RequestParam String network,@RequestParam String netmask, @RequestParam String numbers, @RequestParam String inside, @RequestParam String outside){
-        commandService.enterInterface(inside);
-        commandService.configureSide(inside);
-        commandService.enterInterface(outside);
-        commandService.configureSide(outside);
-        if(!commandService.checkNetwork(network, netmask, numbers)){
+    public Result configureNat(@RequestBody NatConfig natConfig){
+        commandService.enterInterface(natConfig.getInside());
+        commandService.configureSide(natConfig.getInside());
+        commandService.enterInterface(natConfig.getOutside());
+        commandService.configureSide(natConfig.getOutside());
+        if(!commandService.checkNetwork(natConfig.getNetwork(), natConfig.getNetmask(), natConfig.getTotal())){
             return Result.failure("invalid data");
         }
-        commandService.natConfigure(network, netmask,numbers);
+        commandService.natConfigure(natConfig.getNetwork(), natConfig.getNetmask(), natConfig.getTotal());
         return Result.success("success", null);
     }
 
-//    @RequestMapping("/username")
-//    public void sendUsername(@RequestParam String username) throws Exception {
-//        commandService.sendUsername(username);
-//        TelnetUtil.read("Password:");
-//    }
-//
-//    @RequestMapping("/password")
-//    public void sendPassword(@RequestParam String password) throws Exception {
-//        commandService.sendPassword(password);
-////        TelnetUtil.sendPassword(password);
-//        TelnetUtil.read("$");
-//
-//    }
-//
-//    @RequestMapping("/testCommand")
-//    public void testCommand() throws IOException {
-//
-//    }
+    @RequestMapping("/disconnect")
+    public Result disconnect() throws IOException {
+        commandService.disconnect();
+        return Result.success("success", null);
+    }
+
 
 }
