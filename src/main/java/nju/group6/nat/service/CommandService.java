@@ -7,10 +7,7 @@ import nju.group6.nat.util.TelnetUtil;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CommandService {
@@ -158,6 +155,12 @@ public class CommandService {
             }
             list.add(routerInterface);
         }
+        list.sort(new Comparator<RouterInterface>() {
+            @Override
+            public int compare(RouterInterface o1, RouterInterface o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
         return list;
     }
 
