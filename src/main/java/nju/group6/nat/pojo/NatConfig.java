@@ -1,11 +1,13 @@
 package nju.group6.nat.pojo;
 
+import java.util.List;
+
 public class NatConfig {
     private String network;
     private String total;
     private String netmask;
-    private String inside;
-    private String outside;
+    private List<String> inside;
+    private List<String> outside;
 
     public String getNetwork() {
         return network;
@@ -31,19 +33,19 @@ public class NatConfig {
         this.netmask = netmask;
     }
 
-    public String getInside() {
+    public List<String> getInside() {
         return inside;
     }
 
-    public void setInside(String inside) {
+    public void setInside(List<String> inside) {
         this.inside = inside;
     }
 
-    public String getOutside() {
+    public List<String> getOutside() {
         return outside;
     }
 
-    public void setOutside(String outside) {
+    public void setOutside(List<String> outside) {
         this.outside = outside;
     }
 }

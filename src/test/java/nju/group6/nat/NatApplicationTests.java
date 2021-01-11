@@ -4,6 +4,8 @@ package nju.group6.nat;
 import nju.group6.nat.pojo.RouterInterface;
 import nju.group6.nat.service.CommandService;
 import nju.group6.nat.util.TelnetUtil;
+import org.apache.commons.net.io.Util;
+import org.apache.commons.net.telnet.TelnetClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,13 +61,27 @@ class NatApplicationTests {
 //        commandService.enterInterface("f0/1");
 //        TelnetUtil.read("#");
 //        commandService.confInterfaceIP("f0/1","10.0.0.3","255.0.0.0","1" );
-          TelnetUtil.connect("10.0.0.3","23");
-        TelnetUtil.read(":");
-        TelnetUtil.sendCommand("fgg");
-        TelnetUtil.read(":");
-        TelnetUtil.sendCommand("123");
+//          TelnetUtil.connect("192.168.3.2","23");
+//        TelnetUtil.read(":");
+//        TelnetUtil.sendCommand("fgg");
+//        TelnetUtil.read("password:");
+//        TelnetUtil.sendCommand("123");
+//        TelnetUtil.read("fgg>");
+        //Util.copyStream(TelnetUtil.getInputStream(), System.out);
+        TelnetUtil.connect("10.0.0.1", "23");
+        TelnetUtil.read("Password:");
+        TelnetUtil.sendCommand("CISCO");
         TelnetUtil.read(">");
+        TelnetUtil.sendCommand("enable");
+        TelnetUtil.read("Password:");
+        TelnetUtil.sendCommand("CISCO");
+//        TelnetUtil.sendCommand("config ter");
+        TelnetUtil.read("#");
 
+
+        TelnetUtil.sendCommand("show ip nat translations");
+        TelnetUtil.sendCommand("k");
+        TelnetUtil.read("#");
     }
 
 }

@@ -19,8 +19,13 @@ public class IpUtil {
 
     public static int getNetmask(String netmask){
         String[] masks = netmask.split("\\.");
-        return (Integer.parseInt(masks[0]) << 24) | (Integer.parseInt(masks[1]) << 16) |
-                (Integer.parseInt(masks[2]) << 8) | Integer.parseInt(masks[3]);
+        int ans = 0;
+        for(int i = 0; i < 4; i++){
+            int a = Integer.parseInt(masks[i]);
+            int shift = a << (32-8*(i+1));
+            ans |= shift;
+        }
+        return ans;
     }
 
 
@@ -58,11 +63,12 @@ public class IpUtil {
         return ~mask - 1;
     }
 
-    public static List<String> getStartIp(String ip, String netmask,int number){
+    public static List<String> getStartIp(String ip, String netmask, int number){
         String network = getNetwork(ip, netmask);
-        int mask = getNetmask(netmask);
-        int startIp = mask & 1;
-        int endIp = mask & number;
+//        System.out.println(network);
+        int mask = getNetmask(network);
+        int startIp = mask | 1;
+        int endIp = mask | number;
         return Arrays.asList(int2String(startIp), int2String(endIp));
     }
 
@@ -83,12 +89,15 @@ public class IpUtil {
         StringBuilder ipstr = new StringBuilder();
         for(int i = 0; i < 4; i++){
             int addr = ip & 0xff000000;
+            addr = addr >>> 24;
             ipstr.append(addr).append(".");
             ip = ip << 8;
         }
         ipstr.deleteCharAt(ipstr.length()-1);
         return ipstr.toString();
     }
+
+
 
     public static String getPCInfo(String query, int start, int len){
         String info = "";
@@ -112,7 +121,6 @@ public class IpUtil {
         }
         return info;
     }
-
 
 
 }
