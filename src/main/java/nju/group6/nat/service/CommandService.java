@@ -3,6 +3,7 @@ package nju.group6.nat.service;
 
 import nju.group6.nat.pojo.NatConfig;
 import nju.group6.nat.pojo.NatTranslations;
+import nju.group6.nat.pojo.RouteItem;
 import nju.group6.nat.pojo.RouterInterface;
 import nju.group6.nat.util.IpUtil;
 import nju.group6.nat.util.TelnetUtil;
@@ -176,7 +177,7 @@ public class CommandService {
     }
 
     public List<NatTranslations> getNatTranslations() throws IOException {
-        List<NatTranslations> natTranslations = new ArrayList<>();
+        Set<NatTranslations> set = new HashSet<>();
         String command = "show ip nat translations";
         TelnetUtil.sendCommand(command);
         TelnetUtil.sendCommand("k");
@@ -188,8 +189,10 @@ public class CommandService {
             }
             String[] cols = items[i].split("\\s+");
             NatTranslations translation = new NatTranslations(cols[0], cols[1], cols[2]);
-            natTranslations.add(translation);
+            set.add(translation);
+
         }
+        List<NatTranslations> natTranslations = new ArrayList<>(set);
         System.out.println(natTranslations);
         return natTranslations;
     }
@@ -198,6 +201,23 @@ public class CommandService {
         String command = "telnet "+ip;
         TelnetUtil.sendCommand(command);
         TelnetUtil.read("Password:");
+    }
+
+    public List<RouteItem> getRouteTable() throws IOException {
+        List<RouteItem> routeTable = new ArrayList<>();
+        String command = "show ip route";
+        TelnetUtil.sendCommand(command);
+        String ret = TelnetUtil.read("#");
+        String[] items  = ret.split("\n");
+        for(int i = 10; i < items.length-1; i++){
+            if(items[i].startsWith("C") || items[i].startsWith("L")){
+                continue;
+            }
+            String[] cols = items[i].split("\\s+");
+            RouteItem routeItem = new RouteItem(cols[0], cols[1], cols[cols.length-1]);
+            routeTable.add(routeItem);
+        }
+        return routeTable;
     }
 
 }

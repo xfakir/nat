@@ -1,9 +1,6 @@
 package nju.group6.nat.controller;
 
-import nju.group6.nat.pojo.NatConfig;
-import nju.group6.nat.pojo.NatTranslations;
-import nju.group6.nat.pojo.RouteConfig;
-import nju.group6.nat.pojo.RouterInterface;
+import nju.group6.nat.pojo.*;
 import nju.group6.nat.service.CommandService;
 import nju.group6.nat.util.Result;
 import nju.group6.nat.util.TelnetUtil;
@@ -111,6 +108,12 @@ public class CommandController {
     public Result telnet(@RequestParam String ip) throws IOException {
         commandService.telnet(ip);
         return Result.success("success", null);
+    }
+
+    @RequestMapping("/routeTable")
+    public Result getRouteTable() throws IOException {
+        List<RouteItem> routeItems = commandService.getRouteTable();
+        return  Result.success("success", routeItems);
     }
 
     @RequestMapping("/disconnect")

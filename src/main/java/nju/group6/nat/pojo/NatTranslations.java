@@ -1,5 +1,7 @@
 package nju.group6.nat.pojo;
 
+import java.util.Objects;
+
 /**
  * @author jerry
  * @create 2021-01-07-19:55
@@ -49,5 +51,20 @@ public class NatTranslations {
                 ", localAddress='" + localAddress + '\'' +
                 ", globalAddress='" + globalAddress + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NatTranslations that = (NatTranslations) o;
+        return Objects.equals(protocol, that.protocol) &&
+                Objects.equals(localAddress, that.localAddress) &&
+                Objects.equals(globalAddress, that.globalAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(protocol, localAddress, globalAddress);
     }
 }
