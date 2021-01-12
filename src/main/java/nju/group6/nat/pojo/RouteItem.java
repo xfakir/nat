@@ -7,7 +7,7 @@ package nju.group6.nat.pojo;
 public class RouteItem {
     private String type;
 
-    private String dest;
+    private String destination;
 
     private String nextHop;
 
@@ -15,7 +15,7 @@ public class RouteItem {
     public String toString() {
         return "RouteItem{" +
                 "type='" + type + '\'' +
-                ", dest='" + dest + '\'' +
+                ", destination='" + destination + '\'' +
                 ", nextHop='" + nextHop + '\'' +
                 '}';
     }
@@ -28,12 +28,12 @@ public class RouteItem {
         this.type = type;
     }
 
-    public String getDest() {
-        return dest;
+    public String getDestination() {
+        return destination;
     }
 
-    public void setDest(String dest) {
-        this.dest = dest;
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public String getNextHop() {
@@ -44,9 +44,9 @@ public class RouteItem {
         this.nextHop = nextHop;
     }
 
-    public RouteItem(String type, String dest, String nextHop) {
+    public RouteItem(String type, String destination, String nextHop) {
         this.type = type;
-        this.dest = dest;
+        this.destination = destination;
         this.nextHop = nextHop;
     }
 }

@@ -55,6 +55,7 @@ public class CommandController {
 
     @RequestMapping("/interfaceInfo")
     public Result getInterfaceInfo() throws IOException {
+        commandService.exit();
         List<RouterInterface> routerInterface = commandService.getRouterInterface();
         return Result.success("success", routerInterface);
     }
@@ -105,8 +106,8 @@ public class CommandController {
     }
 
     @RequestMapping("/telnet")
-    public Result telnet(@RequestParam String ip) throws IOException {
-        commandService.telnet(ip);
+    public Result telnet(@RequestParam String hostName) throws IOException {
+        commandService.telnet(hostName);
         return Result.success("success", null);
     }
 

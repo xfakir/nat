@@ -66,6 +66,7 @@ public class CommandService {
             TelnetUtil.sendCommand(command1);
             TelnetUtil.sendCommand(command2);
             TelnetUtil.read("#");
+            exit();
         } catch (IOException e) {
             System.out.println("interface ip conf failed");
             e.printStackTrace();
@@ -157,6 +158,7 @@ public class CommandService {
 
 
     public boolean ping(String ip){
+
         String command = "ping "+ip;
         try {
             TelnetUtil.sendCommand(command);
@@ -180,10 +182,10 @@ public class CommandService {
         Set<NatTranslations> set = new HashSet<>();
         String command = "show ip nat translations";
         TelnetUtil.sendCommand(command);
-        TelnetUtil.sendCommand("k");
+//        TelnetUtil.sendCommand("k");
         String ret = TelnetUtil.read("#");
         String[] items = ret.split("\n");
-        for(int i = 2; i < items.length-2; i++){
+        for(int i = 2; i < items.length-1; i++){
             if(items[i].startsWith("--")){
                 continue;
             }
@@ -209,13 +211,18 @@ public class CommandService {
         TelnetUtil.sendCommand(command);
         String ret = TelnetUtil.read("#");
         String[] items  = ret.split("\n");
-        for(int i = 10; i < items.length-1; i++){
-            if(items[i].startsWith("C") || items[i].startsWith("L")){
+        for(int i = 12; i < items.length-1; i++){
+            if(items[i].length() == 0 || items[i].startsWith("C") || items[i].startsWith("L")){
                 continue;
             }
             String[] cols = items[i].split("\\s+");
-            RouteItem routeItem = new RouteItem(cols[0], cols[1], cols[cols.length-1]);
-            routeTable.add(routeItem);
+            if(cols.length != 0){
+//                for(String s : cols){
+//                    System.out.print(s +" ,");
+//                }
+                RouteItem routeItem = new RouteItem(cols[0], cols[1], cols[cols.length-1]);
+                routeTable.add(routeItem);
+            }
         }
         return routeTable;
     }

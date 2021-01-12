@@ -20,11 +20,11 @@ public class NatTranslations {
         this.globalAddress = globalAddress;
     }
 
-    public String getProtocal() {
+    public String getProtocol() {
         return protocol;
     }
 
-    public void setProtocal(String protocal) {
+    public void setProtocol(String protocal) {
         this.protocol = protocal;
     }
 
